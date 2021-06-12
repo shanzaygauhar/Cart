@@ -1,0 +1,500 @@
+<html>
+<!--For Cross Browser works on Chrome FireFox and Opera-->
+
+<head>
+    <script type="text/javascript">
+        var Cartobj = new Array();
+
+        function Cart(p) {
+            this.ProductArr = new Array();
+            this.id = p;
+            Cartobj[p] = this;
+        }
+
+
+        Cart.prototype.addProduct = function(p) {
+            var l = new Product(p.image, p.name, p.Unitprice, p.quantity, p.id);
+            this.ProductArr[l.id] = l;
+        }
+
+        function Product(image, name, Unitprice, quantity, id) {
+            this.image = image;
+            this.name = name;
+            this.Unitprice = Unitprice;
+            this.quantity = quantity;
+            this.id = id;
+        }
+        Product.prototype.getFieldId = function() {
+            return this.id; // + "_textfield";
+        }
+
+        Product.prototype.getPrice = function() {
+            return this.quantity * this.Unitprice;
+        }
+
+        Cart.prototype.getTotal = function() {
+            var sum = 0;
+            var i = 1;
+            var k = this.ProductArr.length;
+            while (i < k) {
+                var quan = this.ProductArr[i].quantity;
+                var price = this.ProductArr[i].Unitprice;
+                sum += quan * price;
+                i++;
+            }
+            return sum;
+        }
+
+        Cart.prototype.display = function(iden) {
+            var sourc = "https://cdn4.vectorstock.com/i/1000x1000/24/13/shopping-cart-icon-vector-12712413.jpg";
+            var html = "<img src =\"" + sourc + "\" id ='" + "image1" + this.id + "' width=50px height=50px>";
+            html += "&nbsp &nbsp";
+            html += "<text id='" + "cartlabel" + this.id + "'> My Cart </text>";
+            var sou = "https://cdn3.iconfinder.com/data/icons/wysiwyg/80/icons-17-512.png";
+            html += "<img src =\"" + sou + "\" id= '" + "image2" + this.id + "' width=50px height=50px>";
+            document.getElementById(iden).innerHTML += html;
+            document.getElementById(iden).style.border = "solid black 1px";
+            document.getElementById(iden).style.fontSize = "20";
+            document.getElementById(iden).style.width = "50%";
+            var f = "image2" + this.id;
+            document.getElementById(f).style.float = "right";
+            document.getElementById(iden).style.height = "auto";
+            document.getElementById(iden).style.marginBottom = "3%";
+
+            document.body.appendChild(document.getElementById(iden)); //First element of the body
+
+            document.getElementById("image2" + this.id).onclick = function() {
+                alert("The following order is closed.CheckOut Failed!\n");
+            }
+
+            var num = 1;
+            var a = this.ProductArr.length;
+            while (num < a) {
+                var html1 = "<img src =\"" + this.ProductArr[num].image + "\" id ='" + "pro" + this.ProductArr[num].getFieldId() + this.id + "' width=50px height=50px>";
+                html1 += "&nbsp &nbsp";
+                html1 += "<text id='prodname1'> " + this.ProductArr[num].name + "</text>";
+                html1 += "&nbsp &nbsp";
+                html1 += "&nbsp &nbsp";
+                html1 += "<text id='" + "unitprice1" + this.id + "'>$" + this.ProductArr[num].Unitprice + "</text>";
+                html1 += "&nbsp &nbsp";
+                html1 += "&nbsp &nbsp";
+                html1 += "<input type='text' placeholder = '0' size='5' oninput=ProductVal(\"" + this.ProductArr[num].id + "," + this.id + "\") value='" + this.ProductArr[num].quantity + "' id='" + "QuantitySpecified" + this.ProductArr[num].getFieldId() + this.id + "'></input>";
+                html1 += "&nbsp &nbsp";
+                html1 += "&nbsp &nbsp";
+                html1 += "<text id='" + "ComputedPrice" + this.ProductArr[num].getFieldId() + this.id + "'>$" + this.ProductArr[num].getPrice() + "</text>";
+                var source = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/White_x_in_red_rounded_square.svg/768px-White_x_in_red_rounded_square.svg.png";
+                html1 += "&nbsp <img src =\"" + source + "\" onclick= remove(\"" + this.ProductArr[num].id + "," + this.id + "\") id ='" + "prod1" + this.ProductArr[num].getFieldId() + this.id + "' width=20px height=20px>";
+
+                var app = "product";
+                var id = this.ProductArr[num].id;
+                var n = app + id + this.id;
+                //Div element created and then appended to the class of cart
+                divEl = document.createElement('div');
+                divEl.id = n;
+                divEl.innerHTML = html1;
+                document.getElementById(iden).appendChild(divEl);
+
+                document.getElementById("prod1" + this.ProductArr[num].getFieldId() + this.id).style.float = "none";
+                document.getElementById("prod1" + this.ProductArr[num].getFieldId() + this.id).style.position = "relative";
+                document.getElementById("prod1" + this.ProductArr[num].getFieldId() + this.id).style.marginTop = "2%";
+                document.getElementById("prod1" + this.ProductArr[num].getFieldId() + this.id).style.marginBottom = "3%";
+                document.getElementById("prod1" + this.ProductArr[num].getFieldId() + this.id).style.marginRight = "0.5%";
+                document.getElementById("QuantitySpecified" + this.ProductArr[num].getFieldId() + this.id).style.marginBottom = "2%";
+                document.getElementById("QuantitySpecified" + this.ProductArr[num].getFieldId() + this.id).style.marginLeft = "1%";
+
+
+                //document.getElementById(iden).style.borderBottom = "solid black 1px";
+                document.getElementById(n).style.borderTop = "solid black 1px";
+                document.getElementById(n).style.fontSize = "20";
+                document.getElementById(n).style.width = "100%";
+                num++;
+            }
+            var html2 = "<text id='" + "Totallabel" + this.id + "'> Total </text>";
+            html2 += "<text id='" + "TotalPrice" + this.id + "'>$" + this.getTotal() + "</text>";
+            //Div element created and then appended to the class of cart
+            divEl = document.createElement('div');
+            divEl.id = "Total" + this.id;
+            divEl.innerHTML = html2;
+            document.getElementById(iden).appendChild(divEl);
+
+            document.getElementById("Totallabel" + this.id).style.float = "left";
+            document.getElementById("TotalPrice" + this.id).style.float = "right";
+
+            document.getElementById("Totallabel" + this.id).style.marginLeft = "6%";
+            document.getElementById("Totallabel" + this.id).style.marginTop = "2%";
+
+            var iden1 = "Total" + this.id;
+            document.getElementById("TotalPrice" + this.id).style.marginTop = "2%";
+            document.getElementById("TotalPrice" + this.id).style.marginRight = "5%";
+            document.getElementById(iden1).style.fontSize = "20";
+            document.getElementById(iden1).style.width = "100%";
+            document.getElementById(iden1).style.height = "12%";
+            //document.getElementById(iden1).style.border = "solid black 1px";
+            document.getElementById(iden1).style.borderTop = "solid black 1px";
+
+            html = "<br><br><br><input type ='button' id = '" + "btn1" + this.id + "' value='Close'></input>";
+            html += "&nbsp &nbsp<input type ='button' id='" + "btn2" + this.id + "' value='Checkout'></input>";
+
+            iden3 = "btn" + this.id;
+            //Div element created and then appended to the class of cart
+            var divEl = document.createElement('div');
+            divEl.id = iden3;
+            divEl.innerHTML = html;
+            document.getElementById(iden).appendChild(divEl);
+
+            document.getElementById("btn1" + this.id).onclick = function() {
+                alert("The following order is closed.CheckOut Failed!\n");
+            }
+
+            document.getElementById("btn2" + this.id).onclick = function() {
+                alert("The following order is placed.CheckOut Successful!\n");
+            }
+
+            document.getElementById("btn1" + this.id).style.marginLeft = "20%";
+            document.getElementById("btn2" + this.id).style.marginRight = "5%";
+
+            document.getElementById("btn2" + this.id).style.marginLeft = "2%";
+            document.getElementById("btn1" + this.id).style.marginRight = "1%";
+
+            document.getElementById("btn1" + this.id).style.marginBottom = "1%";
+            document.getElementById("btn2" + this.id).style.marginBottom = "1%";
+
+            document.getElementById("btn1" + this.id).style.fontSize = "20";
+            document.getElementById("btn2" + this.id).style.fontSize = "20";
+
+            document.getElementById("btn2" + this.id).style.backgroundColor = "blue";
+            document.getElementById("btn1" + this.id).style.backgroundColor = "white";
+
+            document.getElementById("btn1" + this.id).style.borderRadius = "8px";
+            document.getElementById("btn2" + this.id).style.borderRadius = "8px";
+
+            document.getElementById("btn2" + this.id).style.borderColor = "blue";
+            document.getElementById("btn1" + this.id).style.borderColor = "black";
+
+            document.getElementById("btn2" + this.id).style.padding = "4px";
+            document.getElementById("btn1" + this.id).style.padding = "4px";
+
+            document.getElementById("btn2" + this.id).style.position = "relative";
+            document.getElementById("btn1" + this.id).style.position = "relative";
+
+            document.getElementById("btn2" + this.id).style.color = "white";
+            document.getElementById(iden3).style.fontSize = "10";
+            document.getElementById(iden3).style.width = "100%";
+            document.getElementById(iden3).style.borderTop = "solid black 1px";
+        }
+
+        Cart.prototype.ComputePrice = function(id2) {
+            var find = "QuantitySpecified" + this.ProductArr[id2].getFieldId() + this.id;
+            var presentQuantity = document.getElementById(find).value;
+            this.ProductArr[id2].quantity = presentQuantity;
+
+            if (presentQuantity < 0) {
+                alert("The quantity can't be in negative\n");
+                this.ProductArr[id2].quantity = 0;
+            }
+            var total = this.ProductArr[id2].Unitprice * presentQuantity;
+            document.getElementById(find).value = this.ProductArr[id2].quantity;
+            var index = "ComputedPrice" + this.ProductArr[id2].getFieldId() + this.id;
+            if (isNaN(total) || total < 0) {
+                document.getElementById(index).innerHTML = "$" + 0;
+            } else {
+                document.getElementById(index).innerHTML = "$" + total;
+                document.getElementById("TotalPrice" + this.id).innerHTML = "$" + this.getTotal();
+            }
+
+
+        }
+
+        function ProductVal(id) {
+            var i = id.indexOf(",");
+            var num = 0;
+            var cartNum = "";
+            var ProdNum = "";
+            while (num < i) {
+                ProdNum += id[num];
+                num++;
+            }
+
+            i++;
+            var l = id.length - 1;
+            while (i <= l) {
+                cartNum += id[i];
+                i++;
+            }
+
+            Cartobj[cartNum].ComputePrice(ProdNum);
+        }
+
+        function remove(id) {
+            var i = id.indexOf(",");
+            var num = 0;
+            var cartNum = "";
+            var ProdNum = "";
+            while (num < i) {
+                ProdNum += id[num];
+                num++;
+            }
+
+            i++;
+            var l = id.length - 1;
+            while (i <= l) {
+                cartNum += id[i];
+                i++;
+            }
+
+            var iden = Cartobj[cartNum].ProductArr[ProdNum].id;
+            var variable = "product" + iden + cartNum;
+            Cartobj[cartNum].ProductArr[ProdNum].quantity = 0;
+            var f = "TotalPrice" + Cartobj[cartNum].id;
+            document.getElementById(f).innerHTML = "$" + Cartobj[cartNum].getTotal();
+            const node = document.getElementById(variable).parentNode;
+            node.removeChild(document.getElementById(variable));
+
+        }
+
+        Cart.prototype.Update = function(iden) {
+            var num = 1;
+            var p1 = "Product" + num;
+            var obj = new Product("https://cdn.britannica.com/39/187439-050-35BA4DCA/Broccoli-florets.jpg", p1, 100, 1, 1);
+            this.addProduct(obj);
+
+
+            num++;
+            var p1 = "Product" + num;
+            var obj = new Product("https://c8.alamy.com/comp/MN27XY/carrot-icon-vector-illustration-on-white-MN27XY.jpg", p1, 200, 1, 2);
+            this.addProduct(obj);
+
+
+            num++;
+            var p1 = "Product" + num;
+            var obj = new Product("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLg5HNcGgmMHDeTNSvwCHHdm5W00yCRKslqg&usqp=CAU", p1, 300, 1, 3);
+            this.addProduct(obj);
+
+            num++;
+            var p1 = "Product" + num;
+            var obj = new Product(" https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQJLY0xgd5vIEXGKaSLZHeR2yz7m_OruvhQ9hQsV7p6d2AMhc9n", p1, 150, 2, 4);
+            this.addProduct(obj);
+
+            this.display(iden);
+        }
+
+        function load() {
+            var o = new Cart(0);
+            o.Update('Cart');
+
+            //------------------------------Responsiveness--------------------
+            var x = window.matchMedia("(max-width: 900px)")
+            myFunction(x) // Call listener function at run time
+            x.addListener(myFunction) // Attach listener function on state changes
+
+            var y = window.matchMedia("(max-width: 690px)")
+            myFunction2(y) // Call listener function at run time
+            y.addListener(myFunction2) // Attach listener function on state changes
+
+            var z = window.matchMedia("(min-width: 910px)") //1140
+            myFunction3(z) // Call listener function at run time
+            z.addListener(myFunction3) // Attach listener function on state changes
+
+            var p = window.matchMedia("(max-width: 440px)")
+            myFunction4(p) // Call listener function at run time
+            p.addListener(myFunction4) // Attach listener function on state changes
+
+            var L = window.matchMedia("(max-width: 295px)")
+            myFunction5(L) // Call listener function at run time
+            L.addListener(myFunction5) // Attach listener function on state changes
+
+            var k = window.matchMedia("(max-width: 190px)")
+            myFunction6(k) // Call listener function at run time
+            k.addListener(myFunction6) // Attach listener function on state changes
+                //----------------------------------------------------------------
+
+
+
+
+
+
+
+        }
+        //----------------------------------------------Responsive Functions ----------------------------------------//
+
+        function myFunction(x) {
+            if (x.matches) { // If media query matches
+                var k = Cartobj.length;
+                var i = 0;
+                while (i < k) {
+                    document.body.style.width = "60%";
+                    var k = "btn1" + Cartobj[i].id;
+                    document.getElementById(k).style.marginLeft = "1%";
+                    document.getElementById("btn2" + Cartobj[i].id).style.marginRight = "1%";
+
+                    var num = 1;
+                    var pro = "prod1";
+
+                    var f = Cartobj[i].ProductArr.length;
+                    while (num < f) {
+                        var k = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        document.getElementById(k).style.width = "12px";
+                        document.getElementById(k).style.float = "none";
+                        document.getElementById(k).style.height = "12px";
+                        document.getElementById(k).style.marginBottom = "0px";
+                        document.getElementById(k).style.marginTop = "0px";
+                        document.getElementById(k).style.marginRight = "0px";
+                        num++;
+                    }
+                    i++;
+                }
+            }
+        }
+
+        function myFunction2(y) {
+            if (y.matches) { // If media query matches
+                document.body.style.width = "70%";
+                var k = Cartobj.length;
+                var i = 0;
+                while (i < k) {
+                    document.getElementById("image1" + Cartobj[i].id).style.width = "15px";
+                    document.getElementById("image2" + Cartobj[i].id).style.width = "15px";
+                    document.getElementById("image1" + Cartobj[i].id).style.height = "15px";
+                    document.getElementById("image2" + Cartobj[i].id).style.height = "15px";
+                    document.getElementById("btn2" + Cartobj[i].id).style.marginTop = "1%";
+
+                    var num = 1;
+                    var pro = "prod1";
+                    var proo = "cartlabel";
+                    var q = "QuantitySpecified";
+                    var t = "product";
+                    while (num < Cartobj[i].ProductArr.length) {
+                        var k = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        var l = proo + Cartobj[i].id;
+                        var j = q + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        var m = t + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+
+                        document.getElementById(k).style.marginTop = "0%";
+                        document.getElementById(k).style.float = "none";
+                        document.getElementById(k).style.marginBottom = "0%";
+                        document.getElementById(l).style.fontSize = "12";
+                        document.getElementById(m).style.fontSize = "12";
+                        document.getElementById(j).size = "2";
+                        num++;
+                    }
+                    document.getElementById("Total" + Cartobj[i].id).style.fontSize = "12";
+                    document.getElementById("btn1" + Cartobj[i].id).style.fontSize = "15";
+                    document.getElementById("btn2" + Cartobj[i].id).style.fontSize = "15";
+                    i++;
+                }
+
+            }
+        }
+
+        function myFunction3(z) {
+            if (z.matches) { // If media query matches
+                document.body.style.width = "100%";
+                var k = Cartobj.length;
+                var i = 0;
+                while (i < k) {
+                    document.getElementById("btn1" + Cartobj[i].id).style.marginLeft = "20%";
+                    document.getElementById("btn2" + Cartobj[i].id).style.marginRight = "20%";
+                    document.getElementById("btn2" + Cartobj[i].id).style.marginLeft = "1%";
+                    document.getElementById("btn1" + Cartobj[i].id).style.marginRight = "1%";
+                    document.getElementById("image2" + Cartobj[i].id).style.float = "right";
+
+                    var num = 1;
+                    var pro = "prod1";
+
+                    var f = Cartobj[i].ProductArr.length;
+                    while (num < f) {
+                        var k = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        document.getElementById(k).style.float = "right";
+                        num++;
+                    }
+                    i++;
+                }
+            }
+        }
+
+        function myFunction4(y) {
+            if (y.matches) { // If media query matches
+                document.body.style.width = "80%";
+                var k = Cartobj.length;
+                var i = 0;
+                while (i < k) {
+                    document.getElementById("image1" + Cartobj[i].id).style.width = "10px";
+                    document.getElementById("image2" + Cartobj[i].id).style.width = "10px";
+                    document.getElementById("image1" + Cartobj[i].id).style.height = "10px";
+                    document.getElementById("image2" + Cartobj[i].id).style.height = "10px";
+                    document.getElementById("btn2" + Cartobj[i].id).style.marginTop = "1%";
+
+                    var num = 1;
+                    var pro = "prod1";
+
+                    var f = Cartobj[i].ProductArr.length;
+                    while (num < f) {
+                        var k = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        document.getElementById(k).style.float = "none";
+                        num++;
+                    }
+
+                    document.getElementById("btn1" + Cartobj[i].id).style.fontSize = "10";
+                    document.getElementById("btn2" + Cartobj[i].id).style.fontSize = "10";
+                    i++;
+                }
+            }
+        }
+
+        function myFunction5(y) {
+            if (y.matches) { // If media query matches
+                document.body.style.width = "100%";
+                var k = Cartobj.length - 1;
+                var i = 0;
+                while (i < k) {
+                    document.getElementById("Total" + Cartobj[i].id).style.fontSize = "12";
+                    document.getElementById("btn1" + Cartobj[i].id).style.fontSize = "8";
+                    document.getElementById("btn2" + Cartobj[i].id).style.fontSize = "8";
+                    i++;
+                }
+            }
+        }
+
+        function myFunction6(y) {
+            if (y.matches) { // If media query matches
+                var k = Cartobj.length - 1;
+                var i = 0;
+                while (i < k) {
+                    var num = 1;
+                    var pro = "product";
+                    var quan = "QuantitySpecified";
+                    var f = Cartobj[i].ProductArr.length;
+                    while (num < f) {
+                        var l = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        var j = quan + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        document.getElementById(l).style.fontSize = "12px";
+                        document.getElementById(l).style.fontSize = "12px";
+                        document.getElementById(j).style.Size = "1";
+                        num++;
+                    }
+
+                    var num = 1;
+                    var pro = "prod1";
+
+                    while (num < f) {
+                        var l = pro + Cartobj[i].ProductArr[num].id + Cartobj[i].id;
+                        document.getElementById(l).style.float = "none";
+                        num++;
+                    }
+                    document.getElementById("Total" + Cartobj[i].id).style.fontSize = "12";
+                    document.getElementById("btn1" + Cartobj[i].id).style.fontSize = "5";
+                    document.getElementById("btn2" + Cartobj[i].id).style.fontSize = "5";
+                    i++;
+                }
+            }
+        }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body onload="load()">
+    <div id='Cart'>
+    </div>
+</body>
+
+</html>
